@@ -1,0 +1,43 @@
+name: PHP CodeSniffer
+
+on:
+  push:
+    branches:
+      - '**' # Trigger on push to any branch
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2 # Adjust PHP version as needed
+          tools: composer
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: composer install
+
+      # Step 4: Get changed PHP files
+      - name: Get changed PHP files
+        id: changed-files
+        run: |
+          # Get the list of changed files and filter for PHP files
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.php$' > changed-files.txt
+
+      # Step 5: Run PHP CodeSniffer on changed files
+      - name: Run PHP CodeSniffer
+        if: success() && steps.changed-files.outputs.count != 0
+        run: |
+          if [ -s changed-files.txt ]; then
+            xargs -a changed-files.txt ./vendor/bin/phpcs --standard=PSR12
+          else
+            echo "No PHP files changed."
+          fi
