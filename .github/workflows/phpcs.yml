@@ -3,7 +3,7 @@ name: PHP CodeSniffer
 on:
   push:
     branches:
-      - '**' # Trigger on push to any branch
+      - "**" # Trigger on push to any branch
 
 jobs:
   phpcs:
@@ -36,6 +36,9 @@ jobs:
         run: |
           # Get the list of changed files and filter for PHP files
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.php$' > changed-files.txt || echo "" > changed-files.txt
+
+      - name: Debug Changed Files
+        run: cat changed-files.txt
 
       # Step 5: Run PHP CodeSniffer on changed files
       - name: Run PHP CodeSniffer
