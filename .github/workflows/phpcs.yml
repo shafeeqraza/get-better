@@ -25,12 +25,17 @@ jobs:
       - name: Install dependencies
         run: composer install
 
+      - name: Debug Git Context
+        run: |
+          echo "Before: ${{ github.event.before }}"
+          echo "SHA: ${{ github.sha }}"
+
       # Step 4: Get changed PHP files
       - name: Get changed PHP files
         id: changed-files
         run: |
           # Get the list of changed files and filter for PHP files
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.php$' > changed-files.txt
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.php$' > changed-files.txt || echo "" > changed-files.txt
 
       # Step 5: Run PHP CodeSniffer on changed files
       - name: Run PHP CodeSniffer
