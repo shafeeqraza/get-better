@@ -39,10 +39,9 @@ jobs:
 
       # Step 5: Run PHP CodeSniffer on changed files
       - name: Run PHP CodeSniffer
-        if: success() && steps.changed-files.outputs.count != 0
         run: |
           if [ -s changed-files.txt ]; then
             xargs -a changed-files.txt ./vendor/bin/phpcs --standard=PSR12
           else
-            echo "No PHP files changed."
+            echo "No PHP files changed. Skipping linting."
           fi
